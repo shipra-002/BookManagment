@@ -5,7 +5,8 @@ const collegeSchema = new mongoose.Schema({
 name: {
     type:String,
     required:true,
-    unique:true,
+    unique:true,                    
+    lowercase : true
     //example iith
 }, 
     
@@ -15,7 +16,7 @@ name: {
     },
         
  logoLink: {
-     type:"String",
+     type:String,
      required:true
     }, 
     isDeleted: {
