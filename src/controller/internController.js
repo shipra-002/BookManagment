@@ -29,19 +29,23 @@ const createIntern = async function (req, res) {
             return res.status(400).send({ status: false, msg: 'data is required' })
         if (!isValid(name))
             return res.status(400).send({ status: false, msg: 'name is required' })
-        if (isValid(email)){
+        if (isValid(email))
 
-        {
+
             if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.email)))
                 return res.status(400).send({ status: false, msg: "is not a valid email" })
-        }
-            return res.status(400).send({ status: false, msg: 'email is required' })
-    }
-        
+        if (!isValid(email))
+            return res.status(400).send({ status: false, msg: "email is required" })
+
+
+
         if (isValid(mobile))
-            if (!(/^([+]\d{2})?\d{10}$/.test(data.mobile))) {
+
+            if (!(/^([+]\d{2})?\d{10}$/.test(data.mobile)))
                 return res.status(400).send({ status: false, msg: "lease Enter  a Valid Mobile Number" })
-            }
+        if (!isValid(mobile))
+            return res.status(400).send({ status: false, msg: "mobile is required" })
+
 
         if (!isValid(collegeId))
             return res.status(400).send({ status: false, msg: 'collegeId is required' })
