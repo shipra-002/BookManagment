@@ -27,7 +27,7 @@ const internSchema = new mongoose.Schema({
         },
      collegeId: {
          type:ObjectId, 
-         ref: "college", 
+         ref: "collegeModel", 
      },
     isDeleted: {
         type: Boolean, 
@@ -36,4 +36,4 @@ const internSchema = new mongoose.Schema({
 
 },{timeStamps: true})
 
-module.exports = mongoose.model('intern', internSchema)
+module.exports = mongoose.model('internModel', internSchema)

@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const mongoose = require('mongoose')
 
-mongoose.connect("mongodb+srv://komalbansod_04:BdcyrSiZZa4v5y76@komal04.fvnel.mongodb.net/InternProject?retryWrites=true&w=majority", {useNewUrlParser: true})
+mongoose.connect("mongodb+srv://komalbansod_04:BdcyrSiZZa4v5y76@komal04.fvnel.mongodb.net/group22Database?retryWrites=true&w=majority", {useNewUrlParser: true})
     .then(() => console.log('Welcome To College Intership Site'))
     .catch(err => console.log(err))
 

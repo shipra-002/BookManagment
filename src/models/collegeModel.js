@@ -27,4 +27,4 @@ name: {
 
 
 
-    module.exports = mongoose.model('college', collegeSchema);
+    module.exports = mongoose.model('collegeModel', collegeSchema);
