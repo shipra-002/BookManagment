@@ -21,11 +21,18 @@ const createUserData = async function (req, res) {
 
         if (!isValidRequestBody(data))
             return res.status(400).send({ status: false, msg: "Please Enter some data" })
-        if (!isValid(data.title)) {
+        
+            if (!isValid(data.title)) {
             return res.status(400).send({ status: false, msg: "Title is Required" })
         }
-        console.log(title1)
-
+        let values = data.title
+        console.log(values)
+        //const values1 = await UserModel.findOne({values})
+       // console.log(values1)
+       if(!values){
+         return res.status(400).send({status:false,msg:"no"})
+       }
+       
         // if(!title1)
         // return res.send({msg:"is valid"})
 
@@ -115,7 +122,7 @@ const loginUser = async function (req, res) {
                 }, "Group4", { expiresIn: "5hr" }
 
             );
-            res.status(200).setHeader("x-api-key", token);
+            res.status(200).setHeader("x-auth-token", token);
             return res.status(201).send({ status: "LoggedIn", TOKEN: token });
         }
 

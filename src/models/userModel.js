@@ -5,9 +5,13 @@ const UserSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        enum: ["Mr", "Mrs", "Miss"],
         trim: true,
-    },
+    enum: {
+      values:["Mr", "Mrs", "Miss"],
+      message: '{VALUE} is not supported'
+    }
+        
+ },
 
     name: {
         type: String,
