@@ -17,24 +17,23 @@ const isValidRequestBody = function (requestBody) {
 const createUserData = async function (req, res) {
     try {
         let data = req.body
-        //const { title, name, phone, email, password, address } = data
+    const { title, name, phone, email, password, address } = data
 
         if (!isValidRequestBody(data))
             return res.status(400).send({ status: false, msg: "Please Enter some data" })
         
-            if (!isValid(data.title)) {
+            if (!isValid(title)) {
             return res.status(400).send({ status: false, msg: "Title is Required" })
         }
-        let values = data.title
-        console.log(values)
-        //const values1 = await UserModel.findOne({values})
-       // console.log(values1)
-       if(!values){
-         return res.status(400).send({status:false,msg:"no"})
+       
+       const titleEnum = function (title){
+           return ["Mr", "Mrs", "Miss"].indexOf(title) !== -1
+       }
+
+       if(!titleEnum(title)){
+           return res.status(400).send({status:false, msg:"Is not valid title provide Mr, Mrs, Miss "})
        }
        
-        // if(!title1)
-        // return res.send({msg:"is valid"})
 
         if (!isValid(data.name)) {
             return res.status(400).send({ status: false, msg: "Name is Required" })
@@ -119,7 +118,7 @@ const loginUser = async function (req, res) {
                     userId: user._id,
                     email: user._email
 
-                }, "Group4", { expiresIn: "5hr" }
+                }, "Group4"
 
             );
             res.status(200).setHeader("x-auth-token", token);

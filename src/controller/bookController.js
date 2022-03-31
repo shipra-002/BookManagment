@@ -35,7 +35,7 @@ const createBook = async function (req, res) {
 
         let isValidUser = await userModel.findById(userId)
         if (!isValidUser) {
-            return res.status(403).send({ status: false, msg: "you do not Have access to This data !" })
+            return res.status(400).send({ status: false, msg: "you are not allow to create the data ! .. token is Wrong" })
         }
         //if (req.body.userId == req.decodedToken.userId){
         if (!isValidRequestBody(data)) {
@@ -127,13 +127,16 @@ const getBook = async function (req, res) {
         const books = await bookModel.find(Query).select({ book_id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
         if (books.length === 0) {
             return res.status(404).send({ status: false, msg: "Invalid Data" })
-        } if (userId || category || subcategory) {
-            let sortedBooks = await bookModel.find({ $and: [{ isDeleted: false, deletedAt: null }, { $or: [{ userId: userId, isDeleted: false }, { category: category }, { subcategory: subcategory }] }] }).sort({ "title": 1 })
-            return res.status(200).send({ status: true, data: sortedBooks, msg: "Sorted Book By Title" })
-        }
+            
+        } 
         let x = books.length
+        if (userId || category || subcategory) {
+            let sortedBooks = await bookModel.find({ $and: [{ isDeleted: false, deletedAt: null }, { $or: [{ userId: userId, isDeleted: false }, { category: category }, { subcategory: subcategory }] }] }).sort({ "title": 1 })
+            return res.status(200).send({ status: true,total:x, data: sortedBooks, msg: "Sorted Book By Title"})
+        }
+        
 
-        return res.status(200).send({ status: true, msg: 'Book List',total:x, data: books });
+        return res.status(200).send({ status: true, total:x,  data: books });
 
     } catch (error) {
         return res.status(500).send({ status: "failed", msg: error.message })
@@ -165,7 +168,7 @@ const getBookById = async function (req, res) {
             return res.status(404).send({ status: false, msg: "sorry! book is already deleted" });
 
         data = {
-            _id: bookDetails._id, title: bookDetails.title, excerpt: bookDetails.excerpt, userId: bookDetails.userId,
+            _id: bookDetails._id, title: bookDetails.title, excerpt: bookDetails.excerpt, userId: bookDetails.userId, ISBN:bookDetails.ISBN,
             category: bookDetails.category, subcategory: bookDetails.subcategory, isDeleted: bookDetails.isDeleted, reviews: bookDetails.reviews, releasedAT: bookDetails.releasedAT, createdAt: bookDetails.createdAt, updatedAt: bookDetails.updatedAt
         }
 
@@ -183,51 +186,35 @@ const getBookById = async function (req, res) {
 }
 
 
-
-
 const updateBooks = async function (req, res) {
-
     try {
-        let Id = req.params.bookId
-        let books = await bookModel.findById(Id)
-        if (!isValid(books)) {
-            return res.status(404).send({ status: false, msg: "Books not found" })
-        }
+        let bookId = req.params.bookId
+        if(!bookId) res.status(400).send({status:false, msg:"bookId is required"})
+        let { title, excerpt, releasedAt, ISBN } = req.body
+       
+        let titleExist = await bookModel.findOne({ title: title })
+        if (titleExist) 
+        return res.status(400).send({ status: false, msg: "title exist already" })
         
+        let isbnExist = await bookModel.findOne({ ISBN: ISBN })
+        if (isbnExist)
+        return res.status(400).send({ status: false, msg: "ISBN exist already" })
 
-        if (books.isDeleted == false) {
+        let data = await bookModel.findById(bookId)
+        if (!data.isDeleted == false){
+            return res.status(404).send({ status: false, msg: "data is already deleted"})
+     }
 
-            //let data = req.body
-            let newTitle = req.body.title
-            let newExcerpt = req.body.excerpt
-            let newISBN = req.body.ISBN
-            let newCategory = req.body.Category
-            let newSubCategory = req.body.subcategory
-            let newReview = req.body.review
-            let newReleasedAt = req.body.releasedAt
+        let updatedBook = await bookModel.findByIdAndUpdate({_id:bookId, isDeleted:false}, req.body,{new:true})
+        res.status(200).send({status:true, data:updatedBook})
 
-            let updatedBook = await bookModel.findByIdAndUpdate({ _id: Id },
-                {
-                    $set: { title: newTitle, excerpt: newExcerpt, ISBN: newISBN, releasedAt: newReleasedAt },
-                    $push: { review: newReview, category: newCategory, subcategory: newSubCategory }
-                },
-                { new: true })
-
-            console.log(updatedBook)
-            return res.status(200).send({ Status: true, data: updatedBook })
-
-        }
-
-    } catch (error) {
-        res.status(500).send({ status: false, msg: error.message })
-        //console.log(error)
+    } catch (err) {
+        res.status(500).send({ status: false, msg: err.message })
     }
 }
 
 
-
-
-const deleteById = async (req, res) => {
+const deleteById = async function(req, res)  {
 
     try {
 

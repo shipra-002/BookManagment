@@ -6,10 +6,8 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-    enum: {
-      values:["Mr", "Mrs", "Miss"],
-      message: '{VALUE} is not supported'
-    }
+    enum: ["Mr", "Mrs", "Miss"],
+  
         
  },
 
